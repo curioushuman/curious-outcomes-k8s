@@ -1,0 +1,6 @@
+dependencies:
+- name: curious-human-lib
+  repository: file://../lib
+  version: 0.0.1
+digest: sha256:918a3dcdf276cd402b8aa6579dcc498d014e32fdd379dddced381c36259e2747
+generated: "2022-05-17T14:55:52.654984+10:00"
