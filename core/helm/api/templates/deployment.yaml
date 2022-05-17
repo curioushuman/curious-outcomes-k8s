@@ -1,0 +1,3 @@
+{{- include "curious-human-lib.deployment" (list . "co-api.deployment") -}}
+{{- define "co-api.deployment" -}}
+{{- end -}}
