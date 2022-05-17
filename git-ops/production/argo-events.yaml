@@ -9,7 +9,7 @@ spec:
   project: production
   source:
     path: infra/argo-events
-    repoURL: https://github.com/curioushuman/poke-k8s
+    repoURL: https://github.com/curioushuman/curious-outcomes-k8s
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc

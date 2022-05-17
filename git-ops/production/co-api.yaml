@@ -1,20 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: poke-api
+  name: co-api
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: production
   source:
-    path: core/poke-api/overlays/production
-    repoURL: https://github.com/curioushuman/poke-k8s.git
+    path: core/co-api/overlays/production
+    repoURL: https://github.com/curioushuman/curious-outcomes-k8s.git
     targetRevision: HEAD
     kustomize:
       # https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/images/
       images:
-      - curioushuman/poke-api:1.1.4
+      - curioushuman/curious-outcomes-api:0.0.1
   destination:
     server: https://kubernetes.default.svc
     namespace: production
