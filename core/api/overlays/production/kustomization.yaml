@@ -5,14 +5,14 @@ resources:
 - ../../base
 - certificate.yaml
 - issuer.yaml
-- poke-api-mongodb.prod.yaml
+- co-api-mongodb.prod.yaml
 
 patchesStrategicMerge:
 - patches/deployment.rmv-debug.patch.yaml
 - patches/ingress.add-tls.patch.yaml
-- patches/poke-api.mongodb.delete.yaml
+- patches/co-api.mongodb.delete.yaml
 
 replacements:
-- path: patches/poke-api-mongodb.replacement.yaml
+- path: patches/co-api-mongodb.replacement.yaml
 
 namespace: production

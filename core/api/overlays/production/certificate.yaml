@@ -1,13 +1,13 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: poke-certificate
+  name: curious-outcomes-certificate
   # Namespace will be added by ArgoCD
   # namespace: argocd
 spec:
   dnsNames:
-    - poke-api.curioushuman.com.au
-  secretName: letsencrypt-poke-secret
+    - api.curious-outcomes.community
+  secretName: letsencrypt-co-secret
   issuerRef:
-    name: letsencrypt-poke
+    name: letsencrypt-co
     kind: ClusterIssuer

@@ -120,15 +120,15 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: mongodb
     spec:
-      
+
       serviceAccountName: poke-mongodb
       affinity:
         podAffinity:
-          
+
         podAntiAffinity:
-          
+
         nodeAffinity:
-          
+
       securityContext:
         fsGroup: 1001
         sysctls: []
@@ -215,7 +215,7 @@ spec:
           volumeMounts:
             - name: datadir
               mountPath: /bitnami/mongodb
-              subPath: 
+              subPath:
       volumes:
         - name: datadir
           persistentVolumeClaim:
@@ -245,26 +245,26 @@ spec:
     spec:
       containers:
       - env:
-        - name: POKE_SVC_PORT
+        - name: K8S_SERVICE_PORT
           value: "3000"
-        - name: POKE_APP_NAME
+        - name: K8S_APP_NAME
           value: poke-api
-        - name: POKE_RELEASE_NAME
+        - name: K8S_RELEASE_NAME
           value: poke
-        - name: POKE_RELEASE_NAMESPACE
+        - name: K8S_RELEASE_NAMESPACE
           value: production
-        - name: POKE_MONGODB_PORT
+        - name: MONGODB_PORT
           value: "27017"
-        - name: POKE_MONGODB_DATABASE
+        - name: MONGODB_DATABASE
           value: poke-api
-        - name: POKE_MONGODB_USERNAME
+        - name: MONGODB_USERNAME
           value: poke-api
-        - name: POKE_MONGODB_PASSWORD
+        - name: MONGODB_PASSWORD
           valueFrom:
             secretKeyRef:
               key: mongodb-passwords
               name: poke-api-mongodb
-        - name: POKE_DEBUG
+        - name: DEBUG
           value: "true"
         image: curioushuman/poke-api:0.0.2
         imagePullPolicy: IfNotPresent
@@ -311,7 +311,7 @@ kind: SealedSecret
 metadata:
   creationTimestamp: null
   name: poke-api-mongodb
-  namespace: poke-dev
+  namespace: co-dev
 spec:
   encryptedData:
     mongodb-passwords: AgC1hRZ2eCACH7gER0gFTPXYI03YHSZRPUnweAh5bNj+E8YyBTO0CR732E4MSjHOnYq2gUudMawcby/tooeyEhPjZocX+eSLNZ6YvsStsbtK4DNTDztHbKVWXA8I0CAxGCxrMktP82xs0PtcFvtX/Jb+VQS2iBGKz2zTx7FtMK3zzGOTAORBHpy4AkhEaxenF/Cc3HwjuByut/s9lissOAB29xx1WpSEuo67y9toNsTFVNVz3Dgo0gz2HhTJkVp5knUxY2D203zNj3f6F1lI6O1WT4i8dvmkJboGH+6ayB8P3BYBL/l7fyPbDHqALSrpoRYg2NLgXxcrM0KfH9H/JIqPCxcm7rQQoUAU4WRLdOOrBlVPeIB4jzZnhjU6emYw1UehQmqDcSrj84+HgF88pt35Oti1W/a+nb2TkrF1rfLSrD9sQLEUf99xNMUTTnGJBk3tNNc168t/C7gNE2HOilf27E11IoIuG9o1kox2PCnpfKgcixedjAeUFDfNmRqNasXF7t/9lAsac+ckV+1XCqz8DlG44HVc8u6/ncCczAJ/Fn3KYxX+OoKL7ONOM316NKVn7XzK/RpRW3Lz35M5pqKKapVCDVcyjDH22KuXfruZRsX8vsbjLlYXWAIOW9dnW77UA14QPi5a5SlA0h/JXlYL3y7uhd7WCbzNko8teobmlifxe47mJAQ8rIgMYLGSAffHoFrFm0UJSwK3kn9O5305QA==
@@ -322,4 +322,4 @@ spec:
     metadata:
       creationTimestamp: null
       name: poke-api-mongodb
-      namespace: poke-dev
+      namespace: co-dev
