@@ -1,15 +1,15 @@
-{{- define "poke-lib.hpa.tpl" -}}
+{{- define "curious-human-lib.hpa.tpl" -}}
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "poke-lib.fullname" . }}
+  name: {{ include "curious-human-lib.fullname" . }}
   labels:
-    {{- include "poke-lib.labels" . | nindent 4 }}
+    {{- include "curious-human-lib.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "poke-lib.fullname" . }}
+    name: {{ include "curious-human-lib.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:
@@ -26,6 +26,6 @@ spec:
         targetAverageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end -}}
-{{- define "poke-lib.hpa" -}}
-{{- include "poke-lib.util.merge" (append . "poke-lib.hpa.tpl") -}}
+{{- define "curious-human-lib.hpa" -}}
+{{- include "curious-human-lib.util.merge" (append . "curious-human-lib.hpa.tpl") -}}
 {{- end -}}

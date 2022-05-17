@@ -1,6 +1,6 @@
-{{- define "poke-lib.ingress.tpl" -}}
-{{- $fullName := include "poke-lib.fullname" . -}}
-{{- $svcPort := include "poke-lib.servicePort" . -}}
+{{- define "curious-human-lib.ingress.tpl" -}}
+{{- $fullName := include "curious-human-lib.fullname" . -}}
+{{- $svcPort := include "curious-human-lib.servicePort" . -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
   {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
@@ -17,14 +17,14 @@ kind: Ingress
 metadata:
   name: {{ $fullName }}
   labels:
-    {{- include "poke-lib.labels" . | nindent 4 }}
+    {{- include "curious-human-lib.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- include "poke-lib.namespace" . | nindent 2 }}
+  {{- include "curious-human-lib.namespace" . | nindent 2 }}
 spec:
-  {{- include "poke-lib.ingressClassName" . | nindent 2 }}
+  {{- include "curious-human-lib.ingressClassName" . | nindent 2 }}
   {{- if .Values.ingress.tls }}
   tls:
   {{- range .Values.ingress.tls }}
@@ -51,13 +51,13 @@ spec:
             {{- $svcBackend = .backend }}
             {{- end }}
             {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
-            {{- include "poke-lib.ingressBackEnd" $svcBackend | nindent 14 }}
+            {{- include "curious-human-lib.ingressBackEnd" $svcBackend | nindent 14 }}
             {{- else }}
-            {{- include "poke-lib.ingressBackEndLegacy" $svcBackend | indent 14 }}
+            {{- include "curious-human-lib.ingressBackEndLegacy" $svcBackend | indent 14 }}
             {{- end }}
         {{- end }}
   {{- end }}
 {{- end -}}
-{{- define "poke-lib.ingress" -}}
-{{- include "poke-lib.util.merge" (append . "poke-lib.ingress.tpl") -}}
+{{- define "curious-human-lib.ingress" -}}
+{{- include "curious-human-lib.util.merge" (append . "curious-human-lib.ingress.tpl") -}}
 {{- end -}}

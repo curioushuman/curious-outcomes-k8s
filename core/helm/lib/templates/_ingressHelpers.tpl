@@ -1,7 +1,7 @@
 {{/*
 Backend output
 */}}
-{{- define "poke-lib.ingressBackEnd" -}}
+{{- define "curious-human-lib.ingressBackEnd" -}}
 service:
   name: {{ .serviceName }}
   port:
@@ -11,7 +11,7 @@ service:
 {{/*
 Backend, legacy output
 */}}
-{{- define "poke-lib.ingressBackEndLegacy" -}}
+{{- define "curious-human-lib.ingressBackEndLegacy" -}}
 serviceName: {{ .serviceName }}
 servicePort: {{ .servicePort }}
 {{- end }}
@@ -19,7 +19,7 @@ servicePort: {{ .servicePort }}
 {{/*
 Ingress class name
 */}}
-{{- define "poke-lib.ingressClassName" -}}
+{{- define "curious-human-lib.ingressClassName" -}}
 {{- $className := "" }}
 {{- if .Values.global.ingressClassName }}
 {{- $className = .Values.global.ingressClassName }}

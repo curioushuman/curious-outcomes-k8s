@@ -1,18 +1,18 @@
-{{- define "poke-lib.deployment.tpl" -}}
+{{- define "curious-human-lib.deployment.tpl" -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "poke-lib.fullname" . }}
+  name: {{ include "curious-human-lib.fullname" . }}
   labels:
-    {{- include "poke-lib.labels" . | nindent 4 }}
-  {{- include "poke-lib.namespace" . | nindent 2 }}
+    {{- include "curious-human-lib.labels" . | nindent 4 }}
+  {{- include "curious-human-lib.namespace" . | nindent 2 }}
 spec:
   {{- if and (not .Values.autoscaling.enabled) .Values.replicaCount }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "poke-lib.selectorLabels" . | nindent 6 }}
+      {{- include "curious-human-lib.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -20,9 +20,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "poke-lib.selectorLabels" . | nindent 8 }}
+        {{- include "curious-human-lib.selectorLabels" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ include "poke-lib.serviceAccountName" . }}
+      serviceAccountName: {{ include "curious-human-lib.serviceAccountName" . }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -36,10 +36,10 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            {{- include "poke-lib.containerEnv" . | nindent 12 }}
+            {{- include "curious-human-lib.containerEnv" . | nindent 12 }}
           ports:
-            {{- include "poke-lib.containerPorts" . | indent 12 }}
-          {{- include "poke-lib.containerProbes" . | indent 10 }}
+            {{- include "curious-human-lib.containerPorts" . | indent 12 }}
+          {{- include "curious-human-lib.containerProbes" . | indent 10 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
@@ -55,6 +55,6 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 {{- end -}}
-{{- define "poke-lib.deployment" -}}
-{{- include "poke-lib.util.merge" (append . "poke-lib.deployment.tpl") -}}
+{{- define "curious-human-lib.deployment" -}}
+{{- include "curious-human-lib.util.merge" (append . "curious-human-lib.deployment.tpl") -}}
 {{- end -}}

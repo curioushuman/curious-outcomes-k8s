@@ -1,0 +1,29 @@
+{{- define "curious-human-lib.storageclass.tpl" -}}
+apiVersion: {{ template "curious-human-lib.storageClassApiVersion" }}
+kind: StorageClass
+metadata:
+  name: {{ template "curious-human-lib.storageClassName" . }}
+  labels:
+    {{- include "curious-human-lib.labels" . | nindent 4 }}
+  {{- with .Values.storageClass.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- if .Values.storageClass.defaultClass }}
+    storageclass.kubernetes.io/is-default-class: "true"
+{{- end }}
+  {{- include "curious-human-lib.namespace" . | nindent 2 }}
+provisioner: {{ template "curious-human-lib.storageClassProvisioner" . }}
+allowVolumeExpansion: {{ template "curious-human-lib.storageClassVolumeExpansion" . }}
+volumeBindingMode: {{ template "curious-human-lib.storageClassVolumeBinding" . }}
+reclaimPolicy: {{ template "curious-human-lib.storageClassReclaimPolicy" . }}
+{{- if .Values.parameters }}
+parameters:
+  {{- range $key, $value := .Values.storageClass.parameters }}
+  {{ $key }}: {{ $value }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- define "curious-human-lib.storageclass" -}}
+{{- include "curious-human-lib.util.merge" (append . "curious-human-lib.storageclass.tpl") -}}
+{{- end -}}
