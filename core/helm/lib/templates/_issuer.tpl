@@ -1,11 +1,11 @@
-{{- define "poke-lib.issuer.tpl" -}}
-{{- $relName := include "poke-lib.name" . -}}
+{{- define "curious-human-lib.issuer.tpl" -}}
+{{- $relName := include "curious-human-lib.name" . -}}
 ---
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: letsencrypt-{{ $relName }}
-  {{- include "poke-lib.namespace" . | nindent 2 }}
+  {{- include "curious-human-lib.namespace" . | nindent 2 }}
 spec:
   acme:
     email: {{ default "mike@curioushuman.com.au" .Values.issuer.email }}
@@ -18,6 +18,6 @@ spec:
           ingress:
             class: nginx
 {{- end -}}
-{{- define "poke-lib.issuer" -}}
-{{- include "poke-lib.util.merge" (append . "poke-lib.issuer.tpl") -}}
+{{- define "curious-human-lib.issuer" -}}
+{{- include "curious-human-lib.util.merge" (append . "curious-human-lib.issuer.tpl") -}}
 {{- end -}}

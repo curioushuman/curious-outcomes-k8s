@@ -1,0 +1,5 @@
+apiVersion: v2
+name: curious-human-lib
+description: General use Helm library; based on the work done in RBC and Poke projects.
+type: library
+version: 0.0.1

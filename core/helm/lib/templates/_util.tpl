@@ -1,11 +1,11 @@
 {{- /*
-poke-lib.util.merge will merge two YAML templates and output the result.
+curious-human-lib.util.merge will merge two YAML templates and output the result.
 This takes an array of three values:
 - the top context
 - the template name of the overrides (destination)
 - the template name of the base (source)
 */}}
-{{- define "poke-lib.util.merge" -}}
+{{- define "curious-human-lib.util.merge" -}}
 {{- $top := first . -}}
 {{- $overrides := fromYaml (include (index . 1) $top) | default (dict ) -}}
 {{- $tpl := fromYaml (include (index . 2) $top) | default (dict ) -}}
