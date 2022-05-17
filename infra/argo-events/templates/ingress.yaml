@@ -12,19 +12,19 @@
 # spec:
 #   ingressClassName: nginx
 #   rules:
-#   - host: argo-events.curioushuman.com.au
+#   - host: argo-events.curious-outcomes.community
 #     http:
 #       paths:
 #       - path: /
 #         pathType: Prefix
 #         backend:
 #           service:
-#             name: github-poke-eventsource-svc
+#             name: github-co-eventsource-svc
 #             port:
 #               number: 12000
 #   tls:
 #   - hosts:
-#     - argo-events.curioushuman.com.au
+#     - argo-events.curious-outcomes.community
 #     secretName: argocd-server-tls
 
 # ---
@@ -40,13 +40,13 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: argo-events.curioushuman.com.au
+  - host: argo-events.curious-outcomes.community
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: github-poke-eventsource-svc
+            name: github-co-eventsource-svc
             port:
               number: 12000

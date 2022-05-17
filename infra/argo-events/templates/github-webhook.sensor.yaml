@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Sensor
 metadata:
-  name: github-poke
+  name: github-co
 spec:
   template:
     serviceAccountName: argo-events-sa
   dependencies:
-    - name: github-poke-eventsource
-      eventSourceName: github-poke
-      eventName: poke-event
+    - name: github-co-eventsource
+      eventSourceName: github-co
+      eventName: co-event
   triggers:
   - template:
-      name: github-poke-trigger
+      name: github-co-trigger
       k8s:
         group: ""
         version: v1
@@ -22,9 +22,9 @@ spec:
             apiVersion: v1
             kind: Pod
             metadata:
-              generateName: github-poke-trigger-
+              generateName: github-co-trigger-
               labels:
-                app: github-poke-trigger
+                app: github-co-trigger
             spec:
               containers:
               - name: hello
@@ -34,6 +34,6 @@ spec:
               restartPolicy: Never
         parameters:
           - src:
-              dependencyName: github-poke-source
+              dependencyName: github-co-source
               dataKey: body.repository.git_url
             dest: spec.containers.0.args.1
