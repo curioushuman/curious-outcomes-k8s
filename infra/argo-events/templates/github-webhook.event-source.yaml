@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: github-poke
+spec:
+  service:
+    ports:
+    - port: 12000
+      targetPort: 12000
+  github:
+    poke-event:
+      owner: curioushuman
+      repository: pok-e-dentifier
+      webhook:
+        endpoint: /github-poke
+        port: "12000"
+        method: POST
+        url: http://argo-events.curioushuman.com.au
+      events:
+        - "*"
+      apiToken:
+        name: github-access
+        key: token
+      insecure: true
+      active: true
+      contentType: json
