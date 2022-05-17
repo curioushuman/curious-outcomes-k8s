@@ -245,26 +245,26 @@ spec:
     spec:
       containers:
       - env:
-        - name: POKE_SVC_PORT
+        - name: K8S_SERVICE_PORT
           value: "3000"
-        - name: POKE_APP_NAME
+        - name: K8S_APP_NAME
           value: poke-api
-        - name: POKE_RELEASE_NAME
+        - name: K8S_RELEASE_NAME
           value: poke
-        - name: POKE_RELEASE_NAMESPACE
+        - name: K8S_RELEASE_NAMESPACE
           value: production
-        - name: POKE_MONGODB_PORT
+        - name: MONGODB_PORT
           value: "27017"
-        - name: POKE_MONGODB_DATABASE
+        - name: MONGODB_DATABASE
           value: poke-api
-        - name: POKE_MONGODB_USERNAME
+        - name: MONGODB_USERNAME
           value: poke-api
-        - name: POKE_MONGODB_PASSWORD
+        - name: MONGODB_PASSWORD
           valueFrom:
             secretKeyRef:
               key: mongodb-passwords
               name: poke-api-mongodb
-        - name: POKE_DEBUG
+        - name: DEBUG
           value: "true"
         image: curioushuman/poke-api:1.1.4
         imagePullPolicy: IfNotPresent
@@ -311,7 +311,7 @@ kind: SealedSecret
 metadata:
   creationTimestamp: null
   name: poke-api-mongodb
-  namespace: poke-dev
+  namespace: co-dev
 spec:
   encryptedData:
     mongodb-passwords: AgCFeGIE3RcU/jOZIYj635K0k9sMPDIje/jw5WXroPqanwM0zEpzJm6+mylyQ/DyZ7recT2fee5hK6rfslgkOfXRUt9+kBzFzSFR2jwZg9wBqQSdf9+r8hm89VBsaClmFDPjp0RR8Sn2ENNULsTkMvgbrx9mHUJDlJMVDJtwQo19/dYJix3mON1XnbXxOSlCnQs8N4+SeX2IoW86i3uLcHjc8mexOh5XsGEUwpggYBeMoAgQRCI205H+UHPUZXY+aT0g4/bu4XrtuBBi+QOr0RDEPqv5bDo7U0kImu9TqmU7mcLz6wDJU3uF4CpkeNHqeSKlYMhb8KC1bd2hcS7CQPRfopz+aQz4Cals3/pyovb0ke9ZP10TcQ4dbNmeZwXFmICGKX543ZLjTasEgafen/gcGR72LoNxg+sacDtE8fhhEN9QE5+agyIF6Dn8wWodF0OOvIYR+8/dV0dkyTohSIU0c62pJIEVCN07EaWB2KQdNYpAoGV1OLxNVvQOKOZButtv7IOheNJkEjKdBerkGDGeQU+4yn7FO5TVV97roobO99PWIkAev2/1eOmFbOiHNIaFErCOtzBlZzSPZH/OR+cYrhfUKO3FoCFHddBEbjbMRu/dDy0c4aYcGggs9HCr3y7+kB8UZJViHcHucvRuW/1ZqbOJuEb8hYKu0Qc3DxxWc9l4l5dj5UoQWtQQIKWkHS9iNBS8hQYkauW1hRbgq5PFcg==
@@ -322,4 +322,4 @@ spec:
     metadata:
       creationTimestamp: null
       name: poke-api-mongodb
-      namespace: poke-dev
+      namespace: co-dev
