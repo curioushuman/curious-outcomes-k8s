@@ -1,0 +1,6 @@
+dependencies:
+- name: poke-lib
+  repository: file://../poke-lib
+  version: 0.0.2
+digest: sha256:d5a518af53590f4204143ae3f3439470c386c251555befa280c4f75b37da78ac
+generated: "2022-05-03T07:02:06.432288+10:00"
