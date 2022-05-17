@@ -299,6 +299,14 @@ Currently I'm using Digital Ocean (DO), I'll assume I've given you access. Use t
 
 * https://docs.digitalocean.com/products/kubernetes/how-to/connect-to-cluster/
 
+Essentially you use the following command:
+
+```bash
+# This configures your cloud cluster for local configuration
+# doctl kubernetes cluster kubeconfig save <cluster_name>
+$ doctl kubernetes cluster kubeconfig save co-k8s
+```
+
 This will result in a k8s context that will allow kubectl (and related) to engage with your cloud cluster.
 
 ```bash
