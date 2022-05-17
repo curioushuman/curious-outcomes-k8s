@@ -3,14 +3,14 @@ kind: Kustomization
 
 resources:
 - ../../base
-- poke-api-mongodb.staging.yaml
+- co-api-mongodb.staging.yaml
 
 patchesStrategicMerge:
 - patches/deployment.namespace.patch.yaml
 - patches/ingress.staging.patch.yaml
-- patches/poke-api.mongodb.delete.yaml
+- patches/co-api.mongodb.delete.yaml
 
 replacements:
-- path: patches/poke-api-mongodb.replacement.yaml
+- path: patches/co-api-mongodb.replacement.yaml
 
 namespace: staging

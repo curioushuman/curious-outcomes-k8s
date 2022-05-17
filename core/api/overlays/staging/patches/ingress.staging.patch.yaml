@@ -1,15 +1,15 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: poke-poke-api
+  name: co-co-api
 spec:
   rules:
-  - host: api-staging.curioushuman.com.au
+  - host: api-staging.curious-outcomes.community
     http:
       paths:
       - backend:
           service:
-            name: poke-poke-api
+            name: co-co-api
             port:
               number: 3000
         path: /api/?(.*)
