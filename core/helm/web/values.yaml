@@ -9,7 +9,7 @@ local:
 replicaCount: 0
 
 image:
-  repository: curioushuman/poke-web
+  repository: curioushuman/curious-outcomes-web
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -18,7 +18,7 @@ image:
 service:
   type: ClusterIP
   port: 3000
-  portName: poke-web
+  portName: co-web
   targetPort: 3000
   protocol: TCP
 
@@ -26,7 +26,7 @@ service:
 # TODO - utilise in ingress
 # ports: [] # Use this if you want to remove this array
 ports:
-  - name: poke-web
+  - name: co-web
     port: 3000
     targetPort: 3000
     protocol: TCP
@@ -37,18 +37,13 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/use-regex: "true"
   hosts:
-    # ! Updated in kustomization
-    # - host: poke-web.curioushuman.com.au
-    - host: poke-web.dev
+    # * Updated in kustomization
+    - host: curious-outcomes-web.dev
       paths:
         - path: /?(.*)
           pathType: Prefix
+  # * Added with kustomization
   tls: []
-  # ! Added with kustomization
-  # tls:
-  #  - secretName: letsencrypt-poke-secret
-  #    hosts:
-  #      - poke-web.curioushuman.com.au
 
 serviceAccount:
   # Specifies whether a service account should be created

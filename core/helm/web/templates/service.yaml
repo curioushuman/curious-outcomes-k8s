@@ -1,0 +1,3 @@
+{{- include "curious-human-lib.service" (list . "co-web.service") -}}
+{{- define "co-web.service" -}}
+{{- end -}}

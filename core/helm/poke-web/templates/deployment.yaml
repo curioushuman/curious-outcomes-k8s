@@ -1,3 +1,0 @@
-{{- include "poke-lib.deployment" (list . "poke-web.deployment") -}}
-{{- define "poke-web.deployment" -}}
-{{- end -}}
