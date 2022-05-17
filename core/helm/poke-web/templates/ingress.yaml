@@ -1,5 +1,0 @@
-{{- if .Values.ingress.enabled -}}
-{{- include "poke-lib.ingress" (list . "poke-web.ingress") -}}
-{{- end }}
-{{- define "poke-web.ingress" -}}
-{{- end -}}
