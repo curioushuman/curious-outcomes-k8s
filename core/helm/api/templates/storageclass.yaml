@@ -1,0 +1,5 @@
+{{- if .Values.storageClass.enabled -}}
+{{- include "curious-human-lib.storageclass" (list . "co.storageclass") -}}
+{{- end }}
+{{- define "co.storageclass" -}}
+{{- end -}}

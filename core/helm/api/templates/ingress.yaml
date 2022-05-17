@@ -1,0 +1,5 @@
+{{- if .Values.ingress.enabled -}}
+{{- include "curious-human-lib.ingress" (list . "co-api.ingress") -}}
+{{- end }}
+{{- define "co-api.ingress" -}}
+{{- end -}}

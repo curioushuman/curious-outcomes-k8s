@@ -9,7 +9,7 @@ local:
 replicaCount: 0
 
 image:
-  repository: curioushuman/poke-api
+  repository: curioushuman/curious-outcomes-api
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -18,7 +18,7 @@ image:
 service:
   type: ClusterIP
   port: 3000
-  portName: poke-api
+  portName: co-api
   targetPort: 3000
   protocol: TCP
 
@@ -26,7 +26,7 @@ service:
 # TODO - utilise in ingress
 # ports: [] # Use this if you want to remove this array
 ports:
-  - name: poke-api
+  - name: co-api
     port: 3000
     targetPort: 3000
     protocol: TCP
@@ -37,18 +37,13 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/use-regex: "true"
   hosts:
-    # ! Updated in kustomization
-    # - host: poke-api.curioushuman.com.au
-    - host: poke-api.dev
+    # * Updated in kustomization
+    - host: curious-outcomes-api.dev
       paths:
         - path: /api/?(.*)
           pathType: Prefix
+  # * Added with kustomization
   tls: []
-  # ! Added with kustomization
-  # tls:
-  #  - secretName: letsencrypt-poke-secret
-  #    hosts:
-  #      - poke-api.curioushuman.com.au
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -63,14 +58,14 @@ serviceAccount:
 # livenessProbe:
 #   httpGet:
 #     path: /api/ping
-#     port: poke-api
+#     port: curious-outcomes-api
 #   failureThreshold: 1
 #   periodSeconds: 10
 
 # startupProbe:
 #   httpGet:
 #     path: /api/ping
-#     port: poke-api
+#     port: curious-outcomes-api
 #   failureThreshold: 30
 #   periodSeconds: 10
 
@@ -84,13 +79,13 @@ mongodb:
   auth:
     enabled: true
     usernames:
-      - "poke-api"
+      - "curious-outcomes-api"
     databases:
-      - "poke-api"
-    existingSecret: "poke-api-mongodb"
+      - "curious-outcomes-api"
+    existingSecret: "co-api-mongodb"
   service:
     port: 27017
-    # Format for ^12.0.0 of bitnami monogoDB chart
+    # Format for ^12.0.0 of bitnami mongoDB chart
     # ports:
     #   mongodb: 27017
   # Required to remove problematic affinity settings
