@@ -1,7 +1,7 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: letsencrypt-poke
+  name: letsencrypt-co
   # Namespace will be added by ArgoCD
   # namespace: argocd
 spec:
@@ -9,7 +9,7 @@ spec:
     email: "mike@curioushuman.com.au"
     server: "https://acme-v02.api.letsencrypt.org/directory"
     privateKeySecretRef:
-      name: letsencrypt-poke-secret
+      name: letsencrypt-co-secret
     solvers:
       # Use the HTTP-01 challenge provider
       - http01:
