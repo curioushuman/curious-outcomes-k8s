@@ -1,6 +1,6 @@
-# Poke Kubernetes
+# Curious Outcomes Kubernetes
 
-The K8s accompaniment to [Pok-E-Dentifier](https://github.com/curioushuman/pok-e-dentifier).
+The K8s accompaniment to [Curious Outcomes Communities](https://github.com/curioushuman/curious-outcomes-communities).
 
 ## Notes
 
@@ -64,21 +64,21 @@ Our custom helm charts have dependencies on other charts. Before they will run w
 
 ```bash
 # Updates for api
-$ helm dependency update ./core/helm/poke-api
+$ helm dependency update ./core/helm/api
 # Updates for web
-$ helm dependency update ./core/helm/poke-web
+$ helm dependency update ./core/helm/web
 ```
 
 ## Configure local domain
 
-Local k8s configuration uses *poke-\*.dev* in it's configurations. You'll need to tell your computer that this points at *localhost*.
+Local k8s configuration uses *curious-outcomes-\*.dev* in it's configurations. You'll need to tell your computer that this points at *localhost*.
 
 ```bash
 # Edit your hosts file
 $ sudo vim /etc/hosts
 # Add the following lines (without the #)
-# 127.0.0.1 poke-web.dev
-# 127.0.0.1 poke-api.dev
+# 127.0.0.1 curious-outcomes-web.dev
+# 127.0.0.1 curious-outcomes-api.dev
 ```
 
 # Troubleshooting
@@ -87,7 +87,7 @@ I've popped this section here as it is relevant whether you're doing *simple* or
 
 ## Notes
 
-Where I have used `-n poke-dev` (local), use the relevant namespace for the cluster you're working in e.g. `staging`, `production`, `your-namespace`.
+The co-dev namespace will be created for you when you use `skaffold dev` in the associated app repo. It is only required for local development, so not given it's own namespace file. Where I have used `-n co-dev` (local), use the relevant namespace for the cluster you're working in e.g. `staging`, `production`, `your-namespace`.
 
 ## Useful kubectl commands
 
@@ -95,11 +95,11 @@ The following commands can be quite useful to troubleshoot:
 
 ```bash
 # Check on all the things
-$ kubectl get all -n poke-dev
+$ kubectl get all -n co-dev
 
 # Check on a specific thing
-# kubectl describe <resource_name> <specific_resource_name> -n poke-dev
-$ kubectl describe pod poke-api-55c76f6f7b-f769l -n poke-dev
+# kubectl describe <resource_name> <specific_resource_name> -n co-dev
+$ kubectl describe pod co-api-55c76f6f7b-f769l -n co-dev
 ```
 
 ## Logging K8s
@@ -108,20 +108,20 @@ Use the following to review logs for your deployed pods:
 
 ```bash
 # Review logs for your pods
-$ kubectl logs deployment/poke-api -n poke-dev
-$ kubectl logs deployment/poke-web -n poke-dev
+$ kubectl logs deployment/co-api -n co-dev
+$ kubectl logs deployment/co-web -n co-dev
 
 # Review logs for sealed secrets
 # first get the generated pod name for sealed secrets controller
-$ kubectl get pods -n poke-dev
+$ kubectl get pods -n co-dev
 # Then run logs
-$ kubectl logs -f poke-sealed-secrets-<generated_name> -n poke-dev
+$ kubectl logs -f co-sealed-secrets-<generated_name> -n co-dev
 
 # Review logs for ingress
 # first get the generated pod name for ingress controller
 $ kubectl get pods
 # Then run logs
-$ kubectl logs poke-nginx-ingress-<generated_name>
+$ kubectl logs co-nginx-ingress-<generated_name>
 ```
 
 ## Shell into a pod/container
@@ -130,11 +130,11 @@ Container and pod can be used synonymously in this instance as I (currently) onl
 
 ```bash
 # list your pods
-$ kubectl get pods -n poke-dev
+$ kubectl get pods -n co-dev
 # OR all the things, and look at the pods list
-$ kubectl get all -n poke-dev
+$ kubectl get all -n co-dev
 # kubectl exec --stdin --tty -n <namespace> <pod_name> -- /bin/sh
-kubectl exec --stdin --tty -n poke-dev poke-web-84ffd58b87-mhp8d -- /bin/sh
+kubectl exec --stdin --tty -n co-dev co-web-84ffd58b87-mhp8d -- /bin/sh
 ```
 
 ## Specific k8s issues
@@ -151,7 +151,7 @@ You might notice your api and api-mongodb pods won't start, and they'll show `Cr
 Error from server (BadRequest): container pod waiting to start: CreateContainerConfigError
 ```
 
-This means the sealed secrets for MongoDb are either missing or not aligned with the existing setup. Re-create them using the commands found in the [Creating Sealed Secrets](#creating-sealed-secrets) section below.
+One of the possible reasons, and probably most likely, is that the sealed secrets for MongoDb are either missing or not aligned with the existing setup. Re-create them using the commands found in the [Creating Sealed Secrets](#creating-sealed-secrets) section below.
 
 **MongoDB pod stuck in pending**
 
@@ -168,13 +168,13 @@ Try restarting Docker Desktop (DD), if not reset your DD Kubernetes cluster (via
 If you're waiting for skaffold dev to finish, try listing your resources to see what's going on:
 
 ```bash
-$ kubectl get pods -n poke-dev
+$ kubectl get pods -n co-dev
 ```
 
 You might see your MongoDB pod is running, but not yet ready. Describe the pod to see what's going on:
 
 ```bash
-$ kubectl describe pod -n poke-dev poke-api-mongodb-<generated_name>
+$ kubectl describe pod -n co-dev co-api-mongodb-<generated_name>
 ```
 
 This seems to be a new issue with bitnami/mongodb@12.0.0. For the time being I've reverted to 11.10.0 and will review this further when there is time.
@@ -186,7 +186,7 @@ This seems to be a new issue with bitnami/mongodb@12.0.0. For the time being I'v
 Review ingress logs (see [logging k8s](#logging-k8s)) and you'll find an error similar to this. Then double check your endpoints, make sure everything is as it should be:
 
 ```bash
-$ kubectl get endpoints -n poke-dev
+$ kubectl get endpoints -n co-dev
 ```
 
 **Ingress load balancer service stuck in pending**
@@ -444,7 +444,7 @@ $ argocd login \
   --username admin \
   --password $ARGO_PASS_OLD \
   --grpc-web \
-  argocd.curioushuman.com.au
+  argocd.curious-outcomes.community
 # Update the password to something different to the original
 $ argocd account update-password \
   --current-password $ARGO_PASS_OLD \
@@ -464,7 +464,7 @@ $ kubectl apply -f git-ops/apps.yaml
 
 ## Running locally
 
-We use Skaffold to run as we develop the apps this k8s ecosystem supports. Instructions, install and develop, can be found in the [associated app](https://github.com/curioushuman/pok-e-dentifier) repo.
+We use Skaffold to run as we develop the apps this k8s ecosystem supports. Instructions, install and develop, can be found in the [associated app](https://github.com/curioushuman/curious-outcomes-communities) repo.
 
 ## Developing locally
 
@@ -499,8 +499,8 @@ This repo comes equipped with Sealed Secrets for MongoDb; local, staging and pro
 ```bash
 # MongoDb sealed secret for local
 $ kubectl \
-  --namespace poke-dev \
-  create secret generic poke-api-mongodb \
+  --namespace co-dev \
+  create secret generic co-api-mongodb \
   --dry-run=client \
   --from-literal mongodb-passwords='pa$$word' \
   --from-literal mongodb-root-password='r00tPa$$word' \
@@ -509,17 +509,17 @@ $ kubectl \
   | kubeseal \
   --controller-namespace=argocd \
   --controller-name=sealed-secrets \
-  --format yaml > ./core/helm/poke-api/templates/secrets/poke-api-mongodb.yaml
+  --format yaml > ./core/helm/api/templates/secrets/co-api-mongodb.yaml
 ```
 
 Namespace and paths for staging and production are as follows:
 
 - Staging
   - staging
-  - ./core/poke-api/overlays/staging/poke-api-mongodb.staging.yaml
+  - ./core/api/overlays/staging/co-api-mongodb.staging.yaml
 - Production
   - production
-  - ./core/poke-api/overlays/production/poke-api-mongodb.production.yaml
+  - ./core/api/overlays/production/co-api-mongodb.production.yaml
 
 # CI/CD
 
@@ -531,12 +531,16 @@ Kustomize is better for multi-environment management. Our ArgoCD setup monitors 
 
 ```bash
 # Output helm charts as YAML
-$ helm template poke ./core/helm/poke-api --skip-tests -n production > ./core/poke-api/base/all.yaml
-# Make any changes via Kustomize that you need to
+$ helm template co ./core/helm/api --skip-tests -n production > ./core/api/base/all.yaml
+# Use Kustomize to alter this output to suit your various environments
+```
+
+To test your Kustomized output:
+
+```bash
 # Test the kustomize output (even if you don't change Kustomize config)
 # -o outputs to file
-$ kustomize build core/poke-api/overlays/production \
-  -o k-test.yaml
+$ kustomize build core/api/overlays/production -o k-test.yaml
 ```
 
 ## Commit and push
@@ -658,7 +662,7 @@ Yes, but no. The following outputs to multiple files, but it places them in a di
 
 ```bash
 # From root
-$ helm template poke ./core/helm/poke-api --skip-tests  -n production --output-dir ./base
+$ helm template co ./core/helm/api --skip-tests -n production --output-dir ./base
 ```
 
 It would be nicer if things were in separate files, but Helm doesn't offer anything in core or plugins (apart from the above). The following includes a bash file example, but the comments RE risk of file overwrite are 100% correct. Will look at this another day:
@@ -667,7 +671,7 @@ It would be nicer if things were in separate files, but Helm doesn't offer anyth
 
 ### Update: 2022-04-25
 
-This is vastly improved now I've moved everything out of the Hlm umbrella chart. However, there is still the risk of file overwriting where any dependency is included so do be careful.
+This is vastly improved now I've moved everything out of the Helm umbrella chart. However, there is still the risk of file overwriting where any dependency is included so do be careful.
 
 ## Inspiration
 
