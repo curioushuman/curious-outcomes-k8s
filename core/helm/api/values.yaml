@@ -79,9 +79,9 @@ mongodb:
   auth:
     enabled: true
     usernames:
-      - "curious-outcomes-api"
+      - "co-api"
     databases:
-      - "curious-outcomes-api"
+      - "co-api"
     existingSecret: "co-api-mongodb"
   service:
     port: 27017
