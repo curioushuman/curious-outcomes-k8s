@@ -12,7 +12,6 @@ I've tried to keep the key instructions brief, and to the point. Where decisions
 
 Not quite production ready, outstanding:
 
-* ArgoCD having TLS issues
 * Argo Workflows SSO setup
 * Argo Workflows themselves
 
@@ -302,6 +301,7 @@ Currently I'm using Digital Ocean (DO), I'll assume I've given you access. Use t
 Essentially you use the following command:
 
 ```bash
+# Login using doctl
 # This configures your cloud cluster for local configuration
 # doctl kubernetes cluster kubeconfig save <cluster_name>
 $ doctl kubernetes cluster kubeconfig save co-k8s

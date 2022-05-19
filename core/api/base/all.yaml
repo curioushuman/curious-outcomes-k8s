@@ -120,15 +120,15 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: mongodb
     spec:
-      
+
       serviceAccountName: co-mongodb
       affinity:
         podAffinity:
-          
+
         podAntiAffinity:
-          
+
         nodeAffinity:
-          
+
       securityContext:
         fsGroup: 1001
         sysctls: []
@@ -215,7 +215,7 @@ spec:
           volumeMounts:
             - name: datadir
               mountPath: /bitnami/mongodb
-              subPath: 
+              subPath:
       volumes:
         - name: datadir
           persistentVolumeClaim:
