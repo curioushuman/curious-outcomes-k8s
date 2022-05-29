@@ -2,4 +2,8 @@ apiVersion: v2
 name: curious-human-lib
 description: General use Helm library; based on the work done in RBC and Poke projects.
 type: library
-version: 0.0.1
+version: 0.0.2
+
+# CHANGE LOG
+# 0.0.2
+# - Added Salesforce ENV vars configuration

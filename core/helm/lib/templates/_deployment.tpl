@@ -36,7 +36,9 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            {{- include "curious-human-lib.containerEnv" . | nindent 12 }}
+            {{- include "curious-human-lib.envK8s" . | nindent 12 }}
+            {{- include "curious-human-lib.envMongoDb" . | nindent 12 }}
+            {{- include "curious-human-lib.envSalesforce" . | nindent 12 }}
           ports:
             {{- include "curious-human-lib.containerPorts" . | indent 12 }}
           {{- include "curious-human-lib.containerProbes" . | indent 10 }}
