@@ -1,7 +1,7 @@
 {{/*
 Env vars consistent across containers
 */}}
-{{- define "curious-human-lib.containerEnv" -}}
+{{- define "curious-human-lib.envK8s" -}}
 - name: K8S_SERVICE_PORT
   value: "{{ .Values.service.port }}"
 - name: K8S_APP_NAME
@@ -14,6 +14,17 @@ Env vars consistent across containers
 - name: K8S_UMBRELLA_RELEASE_NAME
   value: "{{ .Values.global.umbrellaRelease }}"
 {{- end }}
+{{- $debug := default .Values.local.debug .Values.global.debug -}}
+{{- if $debug }}
+- name: DEBUG
+  value: "true"
+{{- end }}
+{{- end }}
+
+{{/*
+MongoDB ENV vars
+*/}}
+{{- define "curious-human-lib.envMongoDb" -}}
 {{- if .Values.mongodb }}
 {{- if .Values.mongodb.service }}
 - name: MONGODB_PORT
@@ -37,10 +48,34 @@ Env vars consistent across containers
 {{- end -}}
 {{- end -}}
 {{- end }}
-{{- $debug := default .Values.local.debug .Values.global.debug -}}
-{{- if $debug }}
-- name: DEBUG
-  value: "true"
+{{- end }}
+
+{{/*
+Salesforce ENV vars
+*/}}
+{{- define "curious-human-lib.envSalesforce" -}}
+{{- if .Values.salesforce }}
+{{- if .Values.salesforce.enabled }}
+{{- $urlPrefix := ternary "test" "login" .Values.salesforce.sandbox -}}
+- name: SALESFORCE_URL_TOKEN
+  value: "{{ printf "https://%s.salesforce.com" $urlPrefix }}"
+- name: SALESFORCE_URL_DATA
+  value: "{{ .Values.salesforce.url }}"
+- name: SALESFORCE_URL_DATA_VERSION
+  value: "{{ .Values.salesforce.apiVersion }}"
+- name: SALESFORCE_USER
+  value: "{{ .Values.salesforce.username }}"
+- name: SALESFORCE_CONSUMER_KEY
+  valueFrom:
+    secretKeyRef:
+      name: co-api-salesforce
+      key: consumer-key
+- name: SALESFORCE_CERTIFICATE_KEY
+  valueFrom:
+    secretKeyRef:
+      name: co-api-salesforce
+      key: certificate-key
+{{- end }}
 {{- end }}
 {{- end }}
 

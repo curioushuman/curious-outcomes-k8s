@@ -1,7 +1,9 @@
-# Must set global object
+# Must set empty global object (if not in use)
 # Just to make life in the templates a little bit less verbose
 global: {}
 
+# Here in case we use this chart within an umbrella chart
+# Candidate for deprecation
 local:
   debug: true
 
@@ -15,6 +17,7 @@ image:
   tag: ""
 
 # * NOTE: at this point, if you want to use ingress you need to use this port
+# Candidate for deprecation
 service:
   type: ClusterIP
   port: 3000
@@ -69,6 +72,10 @@ serviceAccount:
 #   failureThreshold: 30
 #   periodSeconds: 10
 
+# -----------------------------------------------------------------------------
+# DB configuration
+# -----------------------------------------------------------------------------
+
 # Overriding DB values for mongodb
 # TODO - pull sc-db dynamically from umbrella
 # * NOTE: storageClass must be set to "" to use default
@@ -91,7 +98,29 @@ mongodb:
   # Required to remove problematic affinity settings
   podAntiAffinityPreset: ""
 
+# -----------------------------------------------------------------------------
+# Third party API configuration
+# -----------------------------------------------------------------------------
+
+# Salesforce
+# IF not enabled use
+# salesforce:
+#   enabled: false
+# ELSE
+salesforce:
+  enabled: true
+  sandbox: true
+  # Use the full vXX.X syntax for the version
+  apiVersion: "v54.0"
+  username: "api@asiapacificforum.net.202206"
+  # If you have a custom URL use the .my.salesforce.com version of it
+  # e.g. https://asiapacificforum.lightning.force.com/
+  # e.g. https://asiapacificforum.my.salesforce.com/
+  url: "https://asiapacificforum--202206.my.salesforce.com"
+
+# -----------------------------------------------------------------------------
 # Unused values
+# -----------------------------------------------------------------------------
 
 # TODO - get this working using a relevant provisioner
 storageClass:

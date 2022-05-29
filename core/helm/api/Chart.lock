@@ -1,9 +1,9 @@
 dependencies:
 - name: curious-human-lib
   repository: file://../lib
-  version: 0.0.1
+  version: 0.0.2
 - name: mongodb
   repository: https://charts.bitnami.com/bitnami
   version: 11.1.10
-digest: sha256:abd00bda8467da51dcf57994e43743bb649f1c416c32ec3ca78cdaf56aff72fb
-generated: "2022-05-17T14:55:39.80732+10:00"
+digest: sha256:6e8127f6382fd6677267e3252ae63ee49288463bcf15b68e22fb30ff2d8fbf43
+generated: "2022-05-30T06:07:28.346655+10:00"

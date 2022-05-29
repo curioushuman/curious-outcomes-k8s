@@ -49,6 +49,8 @@ All instructions in this README are based on Docker Desktop. If you use Minikube
 - [Install Docker Desktop](https://docs.docker.com/desktop/mac/install/)
 - [Turn on K8s](https://docs.docker.com/desktop/kubernetes/)
 
+**Update:** Recent Docker Desktop update broke K8s grrrr. Have moved to Minikube, but not updated instructions yet.
+
 ## Required Helm repositories
 
 Follow the instructions ([below](#install-helm-repos)) to install Ingress, Sealed Secrets and Bitnami Helm repos.
@@ -80,156 +82,74 @@ $ sudo vim /etc/hosts
 # 127.0.0.1 curious-outcomes-api.dev
 ```
 
-# Troubleshooting
+## Update Sealed Secrets
 
-I've popped this section here as it is relevant whether you're doing *simple* or *complete* setup (below).
+The sealed secrets in Git that were created on someone else's machine (for local development) may not work in your particular context. Therefore you may need to re-create them for the following:
 
-## Notes
+- MongoDb
+- Salesforce
 
-The co-dev namespace will be created for you when you use `skaffold dev` in the associated app repo. It is only required for local development, so not given it's own namespace file. Where I have used `-n co-dev` (local), use the relevant namespace for the cluster you're working in e.g. `staging`, `production`, `your-namespace`.
+**TODO:** if we ever strike this issue we'll need to work out how to manage.
 
-## Useful kubectl commands
+**Important note:** You need to create separate secrets for local, staging and production as sealed-secrets hash is tied to the namespace. Use the below instructions as the basis, and update the namespace and the filename for the three versions.
 
-The following commands can be quite useful to troubleshoot:
+**Obvious note:** please use your own passwords etc.
 
-```bash
-# Check on all the things
-$ kubectl get all -n co-dev
-
-# Check on a specific thing
-# kubectl describe <resource_name> <specific_resource_name> -n co-dev
-$ kubectl describe pod co-api-55c76f6f7b-f769l -n co-dev
-```
-
-## Logging K8s
-
-Use the following to review logs for your deployed pods:
+### MongoDb
 
 ```bash
-# Review logs for your pods
-$ kubectl logs deployment/co-api -n co-dev
-$ kubectl logs deployment/co-web -n co-dev
-
-# Review logs for sealed secrets
-# first get the generated pod name for sealed secrets controller
-$ kubectl get pods -n co-dev
-# Then run logs
-$ kubectl logs -f co-sealed-secrets-<generated_name> -n co-dev
-
-# Review logs for ingress
-# first get the generated pod name for ingress controller
-$ kubectl get pods
-# Then run logs
-$ kubectl logs co-nginx-ingress-<generated_name>
+# MongoDb sealed secret for local
+$ kubectl \
+  --namespace co-dev \
+  create secret generic co-api-mongodb \
+  --dry-run=client \
+  --from-literal mongodb-passwords='pa$$word' \
+  --from-literal mongodb-root-password='r00tPa$$word' \
+  --from-literal mongodb-replica-set-key='somethingLongBase64' \
+  --output yaml \
+  | kubeseal \
+  --controller-namespace=argocd \
+  --controller-name=sealed-secrets \
+  --format yaml > ./core/helm/api/templates/secrets/co-api-mongodb.yaml
 ```
 
-## Shell into a pod/container
+Namespace and paths for staging and production are as follows:
 
-Container and pod can be used synonymously in this instance as I (currently) only ever have one container within a pod.
+- Staging
+  - staging
+  - ./core/api/overlays/staging/co-api-mongodb.staging.yaml
+- Production
+  - production
+  - ./core/api/overlays/production/co-api-mongodb.production.yaml
+
+### Salesforce
 
 ```bash
-# list your pods
-$ kubectl get pods -n co-dev
-# OR all the things, and look at the pods list
-$ kubectl get all -n co-dev
-# kubectl exec --stdin --tty -n <namespace> <pod_name> -- /bin/sh
-kubectl exec --stdin --tty -n co-dev co-web-84ffd58b87-mhp8d -- /bin/sh
-```
+kubectl \
+  --namespace co-dev \
+  create secret generic co-api-salesforce \
+  --dry-run=client \
+  --from-literal consumer-key='obtainedFromYourSalesforceConnectedApp' \
+  --from-literal certificate-key='-----BEGIN PRIVATE KEY-----\nsome\nlines\of\key\n-----END PRIVATE KEY-----' \
+  --output yaml \
+  | kubeseal \
+  --controller-namespace=argocd \
+  --controller-name=sealed-secrets \
+  --format yaml > ./core/helm/api/templates/secrets/co-api-salesforce.yaml
+  ```
 
-## Specific k8s issues
+Namespace and paths for staging and production are as follows:
 
-**Hot tip:** [Lens IDE](https://k8slens.dev/desktop.html) is super useful; a lovely GUI to review status of your various clusters:
+- Staging
+  - staging
+  - ./core/api/overlays/staging/co-api-salesforce.staging.yaml
+- Production
+  - production
+  - ./core/api/overlays/production/co-api-salesforce.production.yaml
 
-### MongoDB issues
+## Troubleshooting simple setup
 
-**Missing MongoDb sealed secrets**
-
-You might notice your api and api-mongodb pods won't start, and they'll show `CreateContainerConfigError` as their status. If you review the logs of these pods you might see something like:
-
-```bash
-Error from server (BadRequest): container pod waiting to start: CreateContainerConfigError
-```
-
-One of the possible reasons, and probably most likely, is that the sealed secrets for MongoDb are either missing or not aligned with the existing setup. Re-create them using the commands found in the [Creating Sealed Secrets](#creating-sealed-secrets) section below.
-
-**MongoDB pod stuck in pending**
-
-If you list all pods you might see your storage-provisioner is frozen:
-
-```bash
-$ kubectl get pods -A
-```
-
-Try restarting Docker Desktop (DD), if not reset your DD Kubernetes cluster (via DD Settings). If you need to reset, you'll need to [reinstall any k8s applications required locally](#required-kubernetes-applications) and [recreate local sealed secrets](#creating-sealed-secrets).
-
-**MongoDB pod stuck in running, but not ready**
-
-If you're waiting for skaffold dev to finish, try listing your resources to see what's going on:
-
-```bash
-$ kubectl get pods -n co-dev
-```
-
-You might see your MongoDB pod is running, but not yet ready. Describe the pod to see what's going on:
-
-```bash
-$ kubectl describe pod -n co-dev co-api-mongodb-<generated_name>
-```
-
-This seems to be a new issue with bitnami/mongodb@12.0.0. For the time being I've reverted to 11.10.0 and will review this further when there is time.
-
-### Ingress issues
-
-**Error obtaining Endpoints for Service**
-
-Review ingress logs (see [logging k8s](#logging-k8s)) and you'll find an error similar to this. Then double check your endpoints, make sure everything is as it should be:
-
-```bash
-$ kubectl get endpoints -n co-dev
-```
-
-**Ingress load balancer service stuck in pending**
-
-Found by reviewing Ingress resources:
-
-```bash
-$ kubectl get all -n ingress-nginx
-```
-
-Restart docker for desktop to fix this:
-
-- https://github.com/kubernetes/ingress-nginx/issues/7686#issuecomment-991761784
-
-**Connection refused (and things)**
-
-If you see an error like this when running skaffold:
-
-```bash
-Error: INSTALLATION FAILED: Internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io": Post "https://ingress-nginx-controller-admission.ingress-nginx.svc:443/networking/v1/ingresses?timeout=10s": dial tcp 10.96.224.41:443: connect: connection refused
-```
-
-Have a look at all the resources:
-
-```bash
-$ kubectl get all -A
-```
-
-You might see:
-
-- multiple ingress-nginx controllers in various statuses
-- None running, one pending
-
-If this is the case, try `skaffold dev` again once that ingress-nginx controller is running.
-
-You might see various things have gone [skew-whiff](https://www.merriam-webster.com/dictionary/skew-whiff), such as:
-
-- Numerous evicted ingress-nginx controllers
-- storage-provisioner in error
-- vpnkit-controller in ContainerStatusUnknown
-
-If this is the case try restarting Docker Desktop (DD), if not reset your DD Kubernetes cluster (via DD Settings). If you need to reset, you'll need to [reinstall any k8s applications required locally](#required-kubernetes-applications) and [recreate local sealed secrets](#creating-sealed-secrets).
-
-**TODO:** there must be a better way.
+See [troubleshooting section](#troubleshooting) below.
 
 # (Complete) Setup - Software
 
@@ -468,6 +388,10 @@ $ kubectl apply -f git-ops/projects.yaml
 $ kubectl apply -f git-ops/apps.yaml
 ```
 
+## Troubleshooting complete setup
+
+See [troubleshooting section](#troubleshooting) below.
+
 # Develop / extend
 
 ## Running locally
@@ -498,37 +422,6 @@ Make sure everything works, and then:
 - Copy these changes over to `values.yaml` (if not already present)
 - Use CI (below) to promote changes to staging environment
 
-## Creating Sealed Secrets
-
-This repo comes equipped with Sealed Secrets for MongoDb; local, staging and production. If you require any further Sealed Secrets, e.g. if you add another DB, then you will need to create your own using the below process.
-
-**Important note:** You need to create separate secrets for local, staging and production as sealed-secrets hash is tied to the namespace. Use the below as the basis, and update the namespace and the filename for the three versions:
-
-```bash
-# MongoDb sealed secret for local
-$ kubectl \
-  --namespace co-dev \
-  create secret generic co-api-mongodb \
-  --dry-run=client \
-  --from-literal mongodb-passwords='pa$$word' \
-  --from-literal mongodb-root-password='r00tPa$$word' \
-  --from-literal mongodb-replica-set-key='somethingLongBase64' \
-  --output yaml \
-  | kubeseal \
-  --controller-namespace=argocd \
-  --controller-name=sealed-secrets \
-  --format yaml > ./core/helm/api/templates/secrets/co-api-mongodb.yaml
-```
-
-Namespace and paths for staging and production are as follows:
-
-- Staging
-  - staging
-  - ./core/api/overlays/staging/co-api-mongodb.staging.yaml
-- Production
-  - production
-  - ./core/api/overlays/production/co-api-mongodb.production.yaml
-
 # CI/CD
 
 We mainly use Helm to support our custom repos, but Kustomize is better suited for multi-environment management. TBC...
@@ -556,6 +449,155 @@ $ kustomize build core/api/overlays/production -o k-test.yaml
 When you're happy, push to the main repo... TBC
 
 TODO: mention in here that we build in the k8s cluster so that the container matches the k8s cluster architecture i.e. amd64 vs arm64.
+
+# Troubleshooting
+
+## Notes
+
+The co-dev namespace will be created for you when you use `skaffold dev` in the associated app repo. It is only required for local development, so not given it's own namespace file. Where I have used `-n co-dev` (local), use the relevant namespace for the cluster you're working in e.g. `staging`, `production`, `your-namespace`.
+
+## Useful kubectl commands
+
+The following commands can be quite useful to troubleshoot:
+
+```bash
+# Check on all the things
+$ kubectl get all -n co-dev
+
+# Check on a specific thing
+# kubectl describe <resource_name> <specific_resource_name> -n co-dev
+$ kubectl describe pod co-api-55c76f6f7b-f769l -n co-dev
+```
+
+## Logging K8s
+
+Use the following to review logs for your deployed pods:
+
+```bash
+# Review logs for your pods
+$ kubectl logs deployment/co-api -n co-dev
+$ kubectl logs deployment/co-web -n co-dev
+
+# Review logs for sealed secrets
+# first get the generated pod name for sealed secrets controller
+$ kubectl get pods -n co-dev
+# Then run logs
+$ kubectl logs -f co-sealed-secrets-<generated_name> -n co-dev
+
+# Review logs for ingress
+# first get the generated pod name for ingress controller
+$ kubectl get pods
+# Then run logs
+$ kubectl logs co-nginx-ingress-<generated_name>
+```
+
+## Shell into a pod/container
+
+Container and pod can be used synonymously in this instance as I (currently) only ever have one container within a pod.
+
+```bash
+# list your pods
+$ kubectl get pods -n co-dev
+# OR all the things, and look at the pods list
+$ kubectl get all -n co-dev
+# kubectl exec --stdin --tty -n <namespace> <pod_name> -- /bin/sh
+kubectl exec --stdin --tty -n co-dev co-web-84ffd58b87-mhp8d -- /bin/sh
+```
+
+## Specific k8s issues
+
+**Hot tip:** [Lens IDE](https://k8slens.dev/desktop.html) is super useful; a lovely GUI to review status of your various clusters:
+
+### MongoDB issues
+
+**Missing MongoDb sealed secrets**
+
+You might notice your api and api-mongodb pods won't start, and they'll show `CreateContainerConfigError` as their status. If you review the logs of these pods you might see something like:
+
+```bash
+Error from server (BadRequest): container pod waiting to start: CreateContainerConfigError
+```
+
+One of the possible reasons, and probably most likely, is that the sealed secrets for MongoDb are either missing or not aligned with the existing setup. Re-create them using the commands found in the [Creating Sealed Secrets](#creating-sealed-secrets) section below.
+
+**MongoDB pod stuck in pending**
+
+If you list all pods you might see your storage-provisioner is frozen:
+
+```bash
+$ kubectl get pods -A
+```
+
+Try restarting Docker Desktop (DD), if not reset your DD Kubernetes cluster (via DD Settings). If you need to reset, you'll need to [reinstall any k8s applications required locally](#required-kubernetes-applications) and [recreate local sealed secrets](#creating-sealed-secrets).
+
+**MongoDB pod stuck in running, but not ready**
+
+If you're waiting for skaffold dev to finish, try listing your resources to see what's going on:
+
+```bash
+$ kubectl get pods -n co-dev
+```
+
+You might see your MongoDB pod is running, but not yet ready. Describe the pod to see what's going on:
+
+```bash
+$ kubectl describe pod -n co-dev co-api-mongodb-<generated_name>
+```
+
+This seems to be a new issue with bitnami/mongodb@12.0.0. For the time being I've reverted to 11.10.0 and will review this further when there is time.
+
+### Ingress issues
+
+**Error obtaining Endpoints for Service**
+
+Review ingress logs (see [logging k8s](#logging-k8s)) and you'll find an error similar to this. Then double check your endpoints, make sure everything is as it should be:
+
+```bash
+$ kubectl get endpoints -n co-dev
+```
+
+**Ingress load balancer service stuck in pending**
+
+Found by reviewing Ingress resources:
+
+```bash
+$ kubectl get all -n ingress-nginx
+```
+
+Restart docker for desktop to fix this:
+
+- https://github.com/kubernetes/ingress-nginx/issues/7686#issuecomment-991761784
+
+**Connection refused (and things)**
+
+If you see an error like this when running skaffold:
+
+```bash
+Error: INSTALLATION FAILED: Internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io": Post "https://ingress-nginx-controller-admission.ingress-nginx.svc:443/networking/v1/ingresses?timeout=10s": dial tcp 10.96.224.41:443: connect: connection refused
+```
+
+Have a look at all the resources:
+
+```bash
+$ kubectl get all -A
+```
+
+You might see:
+
+- multiple ingress-nginx controllers in various statuses
+- None running, one pending
+
+If this is the case, try `skaffold dev` again once that ingress-nginx controller is running.
+
+You might see various things have gone [skew-whiff](https://www.merriam-webster.com/dictionary/skew-whiff), such as:
+
+- Numerous evicted ingress-nginx controllers
+- storage-provisioner in error
+- vpnkit-controller in ContainerStatusUnknown
+
+If this is the case try restarting Docker Desktop (DD), if not reset your DD Kubernetes cluster (via DD Settings). If you need to reset, you'll need to [reinstall any k8s applications required locally](#required-kubernetes-applications) and [recreate local sealed secrets](#creating-sealed-secrets).
+
+**TODO:** there must be a better way.
 
 # Appendix
 
