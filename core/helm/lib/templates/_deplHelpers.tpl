@@ -57,7 +57,7 @@ Salesforce ENV vars
 {{- if .Values.salesforce }}
 {{- if .Values.salesforce.enabled }}
 {{- $urlPrefix := ternary "test" "login" .Values.salesforce.sandbox -}}
-- name: SALESFORCE_URL_TOKEN
+- name: SALESFORCE_URL_AUTH
   value: "{{ printf "https://%s.salesforce.com" $urlPrefix }}"
 - name: SALESFORCE_URL_DATA
   value: "{{ .Values.salesforce.url }}"

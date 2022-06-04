@@ -124,13 +124,20 @@ Namespace and paths for staging and production are as follows:
 
 ### Salesforce
 
+**NOTE:** for new lines literally go to the next line, **DO NOT USE** `\n`!
+
 ```bash
 kubectl \
   --namespace co-dev \
   create secret generic co-api-salesforce \
   --dry-run=client \
   --from-literal consumer-key='obtainedFromYourSalesforceConnectedApp' \
-  --from-literal certificate-key='-----BEGIN PRIVATE KEY-----\nsome\nlines\of\key\n-----END PRIVATE KEY-----' \
+  --from-literal certificate-key='-----BEGIN PRIVATE KEY-----
+  some
+  lines
+  of
+  key
+  -----END PRIVATE KEY-----' \
   --output yaml \
   | kubeseal \
   --controller-namespace=argocd \
@@ -502,6 +509,19 @@ $ kubectl get pods -n co-dev
 $ kubectl get all -n co-dev
 # kubectl exec --stdin --tty -n <namespace> <pod_name> -- /bin/sh
 kubectl exec --stdin --tty -n co-dev co-web-84ffd58b87-mhp8d -- /bin/sh
+```
+
+## Reveal/test a secret
+
+I've used the SF certificate key as an example below. Props to:
+
+- https://howchoo.com/kubernetes/read-kubernetes-secrets
+
+**NOTE:** running this on your local machine won't work for you, unless you have created your own sealed secrets.
+
+```bash
+# kubectl get secret <secret_name> -o jsonpath="{.data.<data_name_>}" | base64 --decode
+$ kubectl get secret -n co-dev co-api-salesforce -o jsonpath="{.data.certificate-key}" | base64 --decode
 ```
 
 ## Specific k8s issues
