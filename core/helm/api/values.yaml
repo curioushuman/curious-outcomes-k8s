@@ -114,8 +114,8 @@ salesforce:
   apiVersion: "v54.0"
   username: "api@asiapacificforum.net.202206"
   # If you have a custom URL use the .my.salesforce.com version of it
-  # e.g. https://asiapacificforum.lightning.force.com/
-  # e.g. https://asiapacificforum.my.salesforce.com/
+  # e.g. NOT https://asiapacificforum.lightning.force.com/
+  # e.g. USE https://asiapacificforum.my.salesforce.com/
   url: "https://asiapacificforum--202206.my.salesforce.com"
 
 # -----------------------------------------------------------------------------
