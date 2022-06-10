@@ -124,7 +124,9 @@ Namespace and paths for staging and production are as follows:
 
 ### Salesforce
 
-**NOTE:** for new lines literally go to the next line, **DO NOT USE** `\n`!
+**NOTE:** you'll notice the certificate-key comes from a file call ./tmp.key. You'll need to create this file yourself and pop your key in there. Using `--from-literal` never worked, so this is the only sure way.
+
+Be sure to delete the tmp.key file before you commit OR **even better** run this from outside of the repo.
 
 ```bash
 kubectl \
@@ -132,13 +134,7 @@ kubectl \
   create secret generic co-api-salesforce \
   --dry-run=client \
   --from-literal consumer-key='obtainedFromYourSalesforceConnectedApp' \
-  --from-literal certificate-key='-----BEGIN PRIVATE KEY-----
-  some
-  lines
-  of
-  key
-  -----END PRIVATE KEY-----' \
-  --output yaml \
+  --from-file=certificate-key=./tmp.key --output yaml \
   | kubeseal \
   --controller-namespace=argocd \
   --controller-name=sealed-secrets \
