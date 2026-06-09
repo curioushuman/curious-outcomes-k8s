@@ -1,16 +1,30 @@
 # Curious Outcomes Kubernetes
 
-The K8s accompaniment to [Curious Outcomes Communities](https://github.com/curioushuman/curious-outcomes-communities).
+A GitOps platform for deploying a NestJS API + web frontend to Kubernetes, built as
+experimentation. This was the project's first deployment approach; it was later re-platformed
+onto AWS serverless (see [Curious Communities](https://github.com/curioushuman/curious-communities),
+the more complete build). The application source for this K8s variant is kept private.
 
-## Notes
+**Status:** an experiment, never delivered — explored, then superseded by the serverless build.
+Kept public as an architecture reference, not a shipped product.
 
-This is for a personal project, so the README is largely geared towards myself (or future team members). If you find this useful, hooray, I hope I've kept the documentation generic enough you can make sense of it.
+## What this demonstrates
 
-I've tried to keep the key instructions brief, and to the point. Where decisions have been made, or further information is available I've (for now) moved it to the bottom in an Appendix. e.g. why there is mix of Helm & Kustomize is answered at the bottom rather than in situ. HTH.
+- **Reusable Helm library chart** (`core/helm/lib`) with shared templates (deployment, HPA,
+  ingress, service, storageclass, issuer), consumed by the `api` and `web` app charts.
+- **Kustomize** base + `staging`/`production` overlays with targeted patches (TLS, namespace,
+  debug removal, datastore injection).
+- **GitOps with ArgoCD** using the app-of-apps pattern (`git-ops/`), plus **Argo Events**
+  (GitHub webhook → event-source → sensor), **Argo Workflows**, cert-manager, ingress-nginx,
+  and **sealed-secrets** for safe-to-commit encrypted secrets.
 
-## Status
+## Organisation of the repo
 
-Not quite production ready, outstanding:
+The `## Setup` notes below are written for the author/future maintainers; they remain as a
+record of how the platform was stood up. Design rationale (e.g. why Helm *and* Kustomize) is
+in the Appendix at the bottom.
+
+### Known incomplete (at the time it was paused)
 
 * Argo Workflows SSO setup
 * Argo Workflows themselves
